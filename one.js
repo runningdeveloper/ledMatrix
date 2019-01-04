@@ -23,10 +23,13 @@ board.on("ready", async () => {
   //   matrix.draw(char)
   // })
 
-  'geoffrey'.split("").forEach((char,i)=>{
-    setTimeout(()=>{
-      matrix.draw(char)
-    }, 1000*i)
-  })
+  // 'geoffrey'.split("").forEach((char,i)=>{
+  //   setTimeout(()=>{
+  //     matrix.draw(char)
+  //   }, 1000*i)
+  // })
+
+  matrix.draw(':')
+  // matrix.draw(')')
 
 });
