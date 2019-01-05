@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run -s serve || npm run -s dev",
+    "format": "prettier --write './**/*.js'",
     "build": "preact build --dest ../public",
     "serve": "preact build && preact serve",
     "dev": "preact watch",
@@ -20,11 +21,16 @@
     "eslint": "^4.5.0",
     "eslint-config-synacor": "^1.1.0",
     "if-env": "^1.0.0",
-    "preact-cli": "^2.0.0"
+    "preact-cli": "^2.0.0",
+    "prettier": "^1.15.3"
   },
   "dependencies": {
+    "@emotion/core": "^10.0.5",
     "axios": "^0.18.0",
+    "emotion": "^10.0.5",
+    "eslint-config-prettier": "^3.3.0",
     "preact": "^8.2.1",
-    "preact-compat": "^3.17.0"
+    "preact-compat": "^3.17.0",
+    "preact-emotion": "^9.2.12"
   }
 }

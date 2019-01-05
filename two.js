@@ -43,6 +43,21 @@ board.on("ready", async () => {
     res.send(`Should display ${req.params.char}`)
   })
 
+  app.get('/raw/:raw', (req, res) => {
+    matrix.clear()
+    let display = req.params.raw.split('')
+    for(let i = 0; i<8 ; i++){
+      for(let j = 0; j<8 ; j++){
+        if(display[(i*8)+j]==='0'){
+          matrix.led(i, j, 0)
+        }else{
+          matrix.led(i, j, 1)
+        } 
+      }
+    }
+    res.send(`Should display ${req.params.raw}`)
+  })
+
 });
 
 
