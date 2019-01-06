@@ -1,9 +1,15 @@
-import styled, { css } from 'preact-emotion'
+import styled, { css, injectGlobal } from 'preact-emotion'
 import { Router } from 'preact-router'
 import { Component } from 'preact'
 
 import Character from './character'
 import Draw from './draw'
+
+injectGlobal`
+body{
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+`;
 
 class App extends Component {
   constructor(props) {
