@@ -15,17 +15,16 @@ class ButtonSwitch extends Component {
     super(props)
   }
 
-
   render() {
     return (
-      <Button color={this.props.value === 0 ? `transparent` : `#4949e6`}
+      <Button
+        color={this.props.value === 0 ? `transparent` : `#4949e6`}
         onClick={() => {
           console.log('clicked')
           const newValue = this.props.value === 0 ? 1 : 0
           this.props.onLedChange(newValue)
         }}
-      >
-      </Button>
+      />
     )
   }
 }

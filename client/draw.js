@@ -4,7 +4,7 @@ import * as axios from 'axios'
 import ButtonSwitch from './ButtonSwitch'
 
 const square = () => {
-  return Array.from({length: 8*8}).map(()=>0)
+  return Array.from({ length: 8 * 8 }).map(() => 0)
   // let array = []
   // for (let i = 0; i < 8; i++) {
   //   for (let j = 0; j < 8; j++) {
@@ -30,7 +30,7 @@ class Draw extends Component {
     this.sendLedData(this.state.raw)
   }
 
-  sendLedData(data){
+  sendLedData(data) {
     axios
       .get(`/raw/${data.join('')}`)
       .then(response => {
@@ -41,8 +41,8 @@ class Draw extends Component {
       })
   }
 
-  onLedClick(){
-    if(this.state.live){
+  onLedClick() {
+    if (this.state.live) {
       this.sendLedData(this.state.raw)
     }
   }
@@ -54,35 +54,57 @@ class Draw extends Component {
         <h1>Send a drawing!</h1>
         <div>
           {this.state.raw.map((x, i) => {
-            return (
-              (i+1)%8===0?
-              <span><ButtonSwitch value={x} onLedChange={() => {
-                let selected = this.state.raw
-                selected[i] = selected[i] === 0 ? 1 : 0
-                this.setState({ raw: selected })
-                this.onLedClick()
-              }}>
-              </ButtonSwitch><br/>
+            return (i + 1) % 8 === 0 ? (
+              <span>
+                <ButtonSwitch
+                  value={x}
+                  onLedChange={() => {
+                    let selected = this.state.raw
+                    selected[i] = selected[i] === 0 ? 1 : 0
+                    this.setState({ raw: selected })
+                    this.onLedClick()
+                  }}
+                />
+                <br />
               </span>
-              :
-              <ButtonSwitch value={x} onLedChange={() => {
-                let selected = this.state.raw
-                selected[i] = selected[i] === 0 ? 1 : 0
-                this.setState({ raw: selected })
-                this.onLedClick()
-              }}>
-              </ButtonSwitch>
+            ) : (
+              <ButtonSwitch
+                value={x}
+                onLedChange={() => {
+                  let selected = this.state.raw
+                  selected[i] = selected[i] === 0 ? 1 : 0
+                  this.setState({ raw: selected })
+                  this.onLedClick()
+                }}
+              />
             )
           })}
         </div>
-        <p className={css`width: 6rem; color: ${this.state.live?'white':'auto'}; background: ${this.state.live?'limegreen':'transparent'};`}>Live is <span>{this.state.live?'ON':'OFF'}</span></p>
+        <p
+          className={css`
+            width: 6rem;
+            color: ${this.state.live ? 'white' : 'auto'};
+            background: ${this.state.live ? 'limegreen' : 'transparent'};
+          `}
+        >
+          Live is <span>{this.state.live ? 'ON' : 'OFF'}</span>
+        </p>
         <button onClick={this.onSubmit}>Send</button>
-        <button onClick={(event)=>{
-          this.setState({raw: square()})
-          this.onSubmit(event)}}>Clear</button>
-        <button onClick={(event)=>{
-          this.setState({live: !this.state.live})
-          }}>Live Toggle</button>
+        <button
+          onClick={event => {
+            this.setState({ raw: square() })
+            this.onSubmit(event)
+          }}
+        >
+          Clear
+        </button>
+        <button
+          onClick={event => {
+            this.setState({ live: !this.state.live })
+          }}
+        >
+          Live Toggle
+        </button>
       </div>
     )
   }
