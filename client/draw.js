@@ -19,15 +19,20 @@ class Draw extends Component {
     super(props)
     this.state = {
       raw: square(),
+      live: false,
     }
     this.onSubmit = this.onSubmit.bind(this)
+    this.onLedClick = this.onLedClick.bind(this)
   }
 
   onSubmit(event) {
     event.preventDefault()
-    console.log('hey', this.state.raw)
+    this.sendLedData(this.state.raw)
+  }
+
+  sendLedData(data){
     axios
-      .get(`/raw/${this.state.raw.join('')}`)
+      .get(`/raw/${data.join('')}`)
       .then(response => {
         console.log(response)
       })
@@ -36,11 +41,17 @@ class Draw extends Component {
       })
   }
 
+  onLedClick(){
+    if(this.state.live){
+      this.sendLedData(this.state.raw)
+    }
+  }
+
   render() {
     // console.log(this.state.raw)
     return (
       <div>
-        <h1>Send a drawing</h1>
+        <h1>Send a drawing!</h1>
         <div>
           {this.state.raw.map((x, i) => {
             return (
@@ -49,6 +60,7 @@ class Draw extends Component {
                 let selected = this.state.raw
                 selected[i] = selected[i] === 0 ? 1 : 0
                 this.setState({ raw: selected })
+                this.onLedClick()
               }}>
               </ButtonSwitch><br/>
               </span>
@@ -57,25 +69,20 @@ class Draw extends Component {
                 let selected = this.state.raw
                 selected[i] = selected[i] === 0 ? 1 : 0
                 this.setState({ raw: selected })
+                this.onLedClick()
               }}>
               </ButtonSwitch>
             )
           })}
         </div>
+        <p className={css`width: 6rem; color: ${this.state.live?'white':'auto'}; background: ${this.state.live?'limegreen':'transparent'};`}>Live is <span>{this.state.live?'ON':'OFF'}</span></p>
         <button onClick={this.onSubmit}>Send</button>
         <button onClick={(event)=>{
           this.setState({raw: square()})
           this.onSubmit(event)}}>Clear</button>
-        {/* <form onSubmit={this.onSubmit}>
-          <input
-            value={this.state.char}
-            onChange={event => this.setState({ char: event.target.value })}
-            type="text"
-            placeholder="Char"
-          />
-          <br />
-          <button type="submit">Send</button>
-        </form> */}
+        <button onClick={(event)=>{
+          this.setState({live: !this.state.live})
+          }}>Live Toggle</button>
       </div>
     )
   }

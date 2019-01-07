@@ -1,0 +1,6 @@
+{
+  "ignore": ["public/*"],
+  "events": {
+    "start": "cd client && npm run build"
+  }
+}

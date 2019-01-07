@@ -45,17 +45,25 @@ board.on("ready", async () => {
 
   app.get('/raw/:raw', (req, res) => {
     matrix.clear()
+    let displayArray = [];
     let display = req.params.raw.split('')
     for(let i = 0; i<8 ; i++){
+      let blankString = ''
       for(let j = 0; j<8 ; j++){
         if(display[(i*8)+j]==='0'){
-          matrix.led(i, j, 0)
+          blankString = `${blankString}0`
         }else{
-          matrix.led(i, j, 1)
+          blankString = `${blankString}1`
         } 
       }
+      displayArray.push(blankString)
     }
+    matrix.draw(displayArray)
     res.send(`Should display ${req.params.raw}`)
+  })
+
+  app.get('/*', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
   })
 
 });
