@@ -29,6 +29,7 @@
     "axios": "^0.18.0",
     "emotion": "^10.0.5",
     "eslint-config-prettier": "^3.3.0",
+    "localforage": "^1.7.3",
     "preact": "^8.2.1",
     "preact-compat": "^3.17.0",
     "preact-emotion": "^9.2.12"

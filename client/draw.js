@@ -1,6 +1,7 @@
 import styled, { css } from 'preact-emotion'
 import { Component } from 'preact'
 import * as axios from 'axios'
+import * as localforage from 'localforage'
 import ButtonSwitch from './ButtonSwitch'
 
 const square = () => {
@@ -20,9 +21,23 @@ class Draw extends Component {
     this.state = {
       raw: square(),
       live: false,
+      delay: 1000,
+      frames: [],
+      playing: false,
     }
     this.onSubmit = this.onSubmit.bind(this)
     this.onLedClick = this.onLedClick.bind(this)
+    this.onSaveFrame = this.onSaveFrame.bind(this)
+    this.onClearDb = this.onClearDb.bind(this)
+    this.onPlay = this.onPlay.bind(this)
+  }
+
+  async componentDidMount() {
+    const frames = await localforage.getItem('frames')
+    console.log('got frames', frames)
+    if (frames) {
+      this.setState({ frames })
+    }
   }
 
   onSubmit(event) {
@@ -45,6 +60,36 @@ class Draw extends Component {
     if (this.state.live) {
       this.sendLedData(this.state.raw)
     }
+  }
+
+  async onSaveFrame() {
+    let currentFrames = this.state.frames
+    if (currentFrames.length > 0) {
+      currentFrames.push(this.state.raw)
+    } else {
+      currentFrames = [this.state.raw]
+    }
+    await localforage.setItem('frames', currentFrames)
+    this.setState({
+      frames: currentFrames,
+    })
+    // console.log('state frames', this.state.frames)
+    // this.sendLedData(this.state.raw)
+  }
+
+  async onClearDb() {
+    await localforage.clear()
+  }
+
+  onPlay() {
+    this.setState({
+      playing: true,
+    })
+    this.state.frames.forEach((frame, i) => {
+      setTimeout(() => {
+        this.sendLedData(frame)
+      }, this.state.delay * i)
+    })
   }
 
   render() {
@@ -105,6 +150,41 @@ class Draw extends Component {
         >
           Live Toggle
         </button>
+        <div
+          className={css`
+            margin-top: 20px;
+          `}
+        >
+          <h3>Animation {this.state.playing && `PLAYING!`}</h3>
+          <input
+            value={this.state.delay}
+            onChange={event => this.setState({ delay: event.target.value })}
+            type="number"
+            placeholder="Delay (ms)"
+          />
+          <br />
+          <button
+            onClick={() => {
+              this.onSaveFrame()
+            }}
+          >
+            Add Frame
+          </button>
+          <button
+            onClick={() => {
+              this.onClearDb()
+            }}
+          >
+            Clear DB
+          </button>
+          <button
+            onClick={() => {
+              this.onPlay()
+            }}
+          >
+            Play
+          </button>
+        </div>
       </div>
     )
   }
