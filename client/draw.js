@@ -1,25 +1,17 @@
 import styled, { css } from 'preact-emotion'
 import { Component } from 'preact'
 import * as axios from 'axios'
-import * as localforage from 'localforage'
-import ButtonSwitch from './ButtonSwitch'
+import Matrix from './matrix'
 
-const square = () => {
+const blank = () => {
   return Array.from({ length: 8 * 8 }).map(() => 0)
-  // let array = []
-  // for (let i = 0; i < 8; i++) {
-  //   for (let j = 0; j < 8; j++) {
-  //     array.push(0)
-  //   }
-  // }
-  // return array
 }
 
 class Draw extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      raw: square(),
+      raw: blank(),
       live: false,
       delay: 1000,
       frames: [],
@@ -27,17 +19,6 @@ class Draw extends Component {
     }
     this.onSubmit = this.onSubmit.bind(this)
     this.onLedClick = this.onLedClick.bind(this)
-    this.onSaveFrame = this.onSaveFrame.bind(this)
-    this.onClearDb = this.onClearDb.bind(this)
-    this.onPlay = this.onPlay.bind(this)
-  }
-
-  async componentDidMount() {
-    const frames = await localforage.getItem('frames')
-    console.log('got frames', frames)
-    if (frames) {
-      this.setState({ frames })
-    }
   }
 
   onSubmit(event) {
@@ -62,69 +43,18 @@ class Draw extends Component {
     }
   }
 
-  async onSaveFrame() {
-    let currentFrames = this.state.frames
-    if (currentFrames.length > 0) {
-      currentFrames.push(this.state.raw)
-    } else {
-      currentFrames = [this.state.raw]
-    }
-    await localforage.setItem('frames', currentFrames)
-    this.setState({
-      frames: currentFrames,
-    })
-    // console.log('state frames', this.state.frames)
-    // this.sendLedData(this.state.raw)
-  }
-
-  async onClearDb() {
-    await localforage.clear()
-  }
-
-  onPlay() {
-    this.setState({
-      playing: true,
-    })
-    this.state.frames.forEach((frame, i) => {
-      setTimeout(() => {
-        this.sendLedData(frame)
-      }, this.state.delay * i)
-    })
-  }
-
   render() {
     // console.log(this.state.raw)
     return (
       <div>
         <h1>Send a drawing!</h1>
-        <div>
-          {this.state.raw.map((x, i) => {
-            return (i + 1) % 8 === 0 ? (
-              <span>
-                <ButtonSwitch
-                  value={x}
-                  onLedChange={() => {
-                    let selected = this.state.raw
-                    selected[i] = selected[i] === 0 ? 1 : 0
-                    this.setState({ raw: selected })
-                    this.onLedClick()
-                  }}
-                />
-                <br />
-              </span>
-            ) : (
-              <ButtonSwitch
-                value={x}
-                onLedChange={() => {
-                  let selected = this.state.raw
-                  selected[i] = selected[i] === 0 ? 1 : 0
-                  this.setState({ raw: selected })
-                  this.onLedClick()
-                }}
-              />
-            )
-          })}
-        </div>
+        <Matrix
+          raw={this.state.raw}
+          onLedClick={raw => {
+            this.setState({ raw })
+            this.onLedClick()
+          }}
+        />
         <p
           className={css`
             width: 6rem;
@@ -137,7 +67,7 @@ class Draw extends Component {
         <button onClick={this.onSubmit}>Send</button>
         <button
           onClick={event => {
-            this.setState({ raw: square() })
+            this.setState({ raw: blank() })
             this.onSubmit(event)
           }}
         >
@@ -162,28 +92,6 @@ class Draw extends Component {
             type="number"
             placeholder="Delay (ms)"
           />
-          <br />
-          <button
-            onClick={() => {
-              this.onSaveFrame()
-            }}
-          >
-            Add Frame
-          </button>
-          <button
-            onClick={() => {
-              this.onClearDb()
-            }}
-          >
-            Clear DB
-          </button>
-          <button
-            onClick={() => {
-              this.onPlay()
-            }}
-          >
-            Play
-          </button>
         </div>
       </div>
     )

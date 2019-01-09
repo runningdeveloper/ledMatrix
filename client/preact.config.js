@@ -1,5 +1,5 @@
-import asyncPlugin from 'preact-cli-plugin-fast-async';
+import asyncPlugin from 'preact-cli-plugin-fast-async'
 
-export default (config) => {
-    asyncPlugin(config);
+export default config => {
+  asyncPlugin(config)
 }

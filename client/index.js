@@ -4,6 +4,7 @@ import { Component } from 'preact'
 
 import Character from './character'
 import Draw from './draw'
+import Animation from './animation'
 
 injectGlobal`
 body{
@@ -45,11 +46,19 @@ class App extends Component {
           >
             <a href="/draw">Send Drawing</a>
           </li>
+          <li
+            className={css`
+              padding-left: 1rem;
+            `}
+          >
+            <a href="/animation">Send Animation</a>
+          </li>
         </ul>
         <Router onChange={this.handleRoute}>
           <Character path="/" />
           <Character path="/character/" />
           <Draw path="/draw/" />
+          <Animation path="/animation/" />
         </Router>
       </div>
     )
