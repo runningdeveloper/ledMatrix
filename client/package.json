@@ -22,6 +22,7 @@
     "eslint-config-synacor": "^1.1.0",
     "if-env": "^1.0.0",
     "preact-cli": "^2.0.0",
+    "preact-cli-plugin-fast-async": "^1.0.1",
     "prettier": "^1.15.3"
   },
   "dependencies": {
