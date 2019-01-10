@@ -17,12 +17,14 @@ class Animation extends Component {
       delay: 1000,
       frames: [],
       playing: false,
+      loop: false,
     }
-    this.onLedClick = this.onLedClick.bind(this)
     this.onSaveFrame = this.onSaveFrame.bind(this)
     this.onClearDb = this.onClearDb.bind(this)
     this.onSaveDb = this.onSaveDb.bind(this)
     this.onPlay = this.onPlay.bind(this)
+    this.onClearFames = this.onClearFames.bind(this)
+    this.checkLoop = this.checkLoop.bind(this)
   }
 
   async componentDidMount() {
@@ -31,11 +33,6 @@ class Animation extends Component {
     if (frames) {
       this.setState({ frames })
     }
-  }
-
-  onSubmit(event) {
-    event.preventDefault()
-    this.sendLedData(this.state.raw)
   }
 
   sendLedData(data) {
@@ -49,18 +46,13 @@ class Animation extends Component {
       })
   }
 
-  onLedClick() {
-    if (this.state.live) {
-      this.sendLedData(this.state.raw)
-    }
-  }
-
   onSaveFrame() {
-    let currentFrames = this.state.frames
+    // clone everywhere, dont want to store current state in playback array
+    let currentFrames = Object.assign([], this.state.frames)
     if (currentFrames.length > 0) {
-      currentFrames.push(this.state.raw)
+      currentFrames.push(Object.assign([], this.state.raw))
     } else {
-      currentFrames = [this.state.raw]
+      currentFrames = [Object.assign([], this.state.raw)]
     }
     this.setState({
       frames: currentFrames,
@@ -74,18 +66,40 @@ class Animation extends Component {
     this.setState({ frames: [] })
   }
 
+  onClearFames() {
+    this.setState({ frames: [] })
+  }
+
   async onSaveDb() {
     console.log('save')
     await localforage.setItem('frames', this.state.frames)
   }
 
+  checkLoop() {
+    if (this.state.loop) {
+      setTimeout(() => {
+        this.onPlay()
+      }, this.state.delay)
+    } else {
+      this.setState({
+        playing: false,
+      })
+    }
+  }
+
   onPlay() {
+    if (this.state.frames.length === 0) {
+      return
+    }
     this.setState({
       playing: true,
     })
     this.state.frames.forEach((frame, i) => {
       setTimeout(() => {
         this.sendLedData(frame)
+        if (i === this.state.frames.length - 1) {
+          this.checkLoop()
+        }
       }, this.state.delay * i)
     })
   }
@@ -99,7 +113,6 @@ class Animation extends Component {
           raw={this.state.raw}
           onLedClick={raw => {
             this.setState({ raw })
-            this.onLedClick()
           }}
         />
 
@@ -132,7 +145,7 @@ class Animation extends Component {
           </button>
           <button
             onClick={() => {
-              this.onSaveDB()
+              this.onSaveDb()
             }}
           >
             Save to DB
@@ -146,10 +159,25 @@ class Animation extends Component {
           </button>
           <button
             onClick={() => {
+              this.onClearFames()
+            }}
+          >
+            Clear Frames
+          </button>
+          <button
+            onClick={() => {
               this.onPlay()
             }}
           >
             Play
+          </button>
+          <p>Looping: {this.state.loop ? 'ON' : 'OFF'}</p>
+          <button
+            onClick={() => {
+              this.setState({ loop: !this.state.loop })
+            }}
+          >
+            Loop
           </button>
         </div>
       </div>

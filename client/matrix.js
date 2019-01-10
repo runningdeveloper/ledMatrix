@@ -22,7 +22,8 @@ class Matrix extends Component {
       let selected = this.state.raw
       selected[i] = selected[i] === 0 ? 1 : 0
       this.setState({ raw: selected })
-      this.props.onLedClick(this.state.raw)
+      console.log(JSON.stringify(selected))
+      this.props.onLedClick(selected)
     }
   }
 

@@ -44,7 +44,7 @@ board.on("ready", async () => {
   })
 
   app.get('/raw/:raw', (req, res) => {
-    matrix.clear()
+    // matrix.clear()
     let displayArray = [];
     let display = req.params.raw.split('')
     for(let i = 0; i<8 ; i++){
