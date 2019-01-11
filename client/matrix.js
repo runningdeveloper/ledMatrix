@@ -12,7 +12,7 @@ class Matrix extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      raw: blank(),
+      raw: this.props.raw ? this.props.raw : blank(),
     }
     this.onLedClick = this.onLedClick.bind(this)
   }
@@ -44,6 +44,7 @@ class Matrix extends Component {
           return (i + 1) % 8 === 0 ? (
             <span>
               <ButtonSwitch
+                small={this.props.small}
                 value={x}
                 onLedChange={() => {
                   this.onLedClick(i)
@@ -53,6 +54,7 @@ class Matrix extends Component {
             </span>
           ) : (
             <ButtonSwitch
+              small={this.props.small}
               value={x}
               onLedChange={() => {
                 this.onLedClick(i)

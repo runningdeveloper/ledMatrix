@@ -4,9 +4,31 @@ import * as axios from 'axios'
 import * as localforage from 'localforage'
 import ButtonSwitch from './ButtonSwitch'
 import Matrix from './matrix'
+import AnimationPiece from './animationPiece'
 
 const blank = () => {
   return Array.from({ length: 8 * 8 }).map(() => 0)
+}
+
+const shift = (array, direction) => {
+  let newArray = []
+  for (let i = 0; i < 8; i++) {
+    let row = []
+    for (let j = 0; j < 8; j++) {
+      row.push(array[i * 8 + j])
+    }
+    if (direction === 'right') {
+      row.pop()
+      row.unshift(0)
+    } else {
+      row.shift()
+      row.push(0)
+    }
+
+    newArray = newArray.concat(row)
+  }
+  console.log('new array', newArray)
+  return newArray
 }
 
 class Animation extends Component {
@@ -123,6 +145,20 @@ class Animation extends Component {
         >
           Clear
         </button>
+        <button
+          onClick={() => {
+            this.setState({ raw: shift(this.state.raw) })
+          }}
+        >
+          Shift Left
+        </button>
+        <button
+          onClick={() => {
+            this.setState({ raw: shift(this.state.raw, 'right') })
+          }}
+        >
+          Shift Right
+        </button>
         <div
           className={css`
             margin-top: 20px;
@@ -180,6 +216,43 @@ class Animation extends Component {
             Loop
           </button>
         </div>
+        <h3>Animation to Play</h3>
+        {this.state.frames.map((frame, i) => (
+          <AnimationPiece
+            frame={frame}
+            onDelete={() => {
+              this.setState({
+                frames: this.state.frames.filter(
+                  a => a !== this.state.frames[i]
+                ),
+              })
+            }}
+            onMoveUp={() => {
+              let currentFrames = Object.assign([], this.state.frames)
+              if (i > 0 && currentFrames[i]) {
+                ;[currentFrames[i - 1], currentFrames[i]] = [
+                  currentFrames[i],
+                  currentFrames[i - 1],
+                ]
+              }
+              this.setState({
+                frames: currentFrames,
+              })
+            }}
+            onMoveDown={() => {
+              let currentFrames = Object.assign([], this.state.frames)
+              if (currentFrames[i + 1]) {
+                ;[currentFrames[i + 1], currentFrames[i]] = [
+                  currentFrames[i],
+                  currentFrames[i + 1],
+                ]
+              }
+              this.setState({
+                frames: currentFrames,
+              })
+            }}
+          />
+        ))}
       </div>
     )
   }
